@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>
+        공정 데이터
+    </title>
+</head>
+
+<h1> 공정 데이터 </h1>
+{% for obj in data_list%}
+<tbody>
+    <tr>
+        <td style="width:10%;padding-right:5px">{{obj.product_key}}</td>
+        <td style="padding-left:5px">{{obj.product_test}}</td></br>
+    </tr>
+</tbody>
+{% endfor %}
