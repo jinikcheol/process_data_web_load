@@ -2,11 +2,18 @@
 <html>
 <head>
     <title>
-        공정 데이터
+        품질 데이터
     </title>
+    <form method="GET" action="/load">
+        <h1> 품질 데이터 출력 </h1>
+        <input type="text" name="num">
+        <button type="submit">검색</button></form>
+        <form method="GET" action="/home">
+        <button type="submit">뒤로</button>
+    </form>
 </head>
 
-<h1> 공정 데이터 </h1>
+
 {% for obj in data_list%}
 <tbody>
     <tr>
