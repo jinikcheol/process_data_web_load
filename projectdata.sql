@@ -1,1 +1,1 @@
-SELECT * FROM projectdata.product_quality;
+SELECT * FROM projectdata.machine;
