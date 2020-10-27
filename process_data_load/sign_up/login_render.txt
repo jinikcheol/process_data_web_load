@@ -1,0 +1,13 @@
+flask jsonify 와 json.dumps의 차이
+
+https://velog.io/@matisse/flask-jsonify-%EC%99%80-json.dumps%EC%9D%98-%EC%B0%A8%EC%9D%B4
+
+
+많은 데이터들을 json형태로 보내주는 API서버 만들기
+
+https://growingsaja.tistory.com/299
+
+
+Flask와 Mysql 연동하여 로그인 기능 구현하기
+
+https://growingsaja.tistory.com/313?category=825126
