@@ -4,6 +4,11 @@ from process import process_operate
 from database import quality_data_list,machine_data_list
 import datamake
 
+
+@app.route('/chart')
+def chart():
+    return render_template('test_load_chart.html')
+
 @app.route('/home')
 def home():
    return render_template('home.html')
@@ -29,34 +34,36 @@ def process_data_load(num=None):
         return html
 
 @app.route('/quality_load', methods=['POST', 'GET'])
-def quality_data_load(num=None):
+def quality_data_load():
     if request.method == 'POST':
         #temp = request.form['num']
         pass
     elif request.method == 'GET':
+        temp2_0 = request.args.get('char2_0')
         temp2 = request.args.get('char2')
-
-        content_list = quality_data_list.get_quality_data_list(temp2)
+        temp2_1 = request.args.get('char2_1')
+        content_list = quality_data_list.get_quality_data_list(temp2_0, temp2, temp2_1)
 
     # now = datetime.today()
     # content_list.append(now)
 
-        html = render_template('quality_load.html', quality_data_list=content_list, char2=temp2)
+        html = render_template('quality_load.html', quality_data_list=content_list, char2_0=temp2_0, char2=temp2, char2_1=temp2_1)
         return html
 
 
 @app.route('/machine_load', methods=['POST', 'GET'])
-def machine_data_load(num=None):
+def machine_data_load():
     if request.method == 'POST':
         #temp = request.form['num']
         pass
     elif request.method == 'GET':
+        temp1_0 = request.args.get('char1_0')
         temp1 = request.args.get('char1')
-
-        content_list = machine_data_list.get_machine_data_list(temp1)
+        temp1_1 = request.args.get('char1_1')
+        content_list = machine_data_list.get_machine_data_list(temp1_0, temp1, temp1_1)
 
         ## 넘겨받은 값을 원래 페이지로 리다이렉트
-        html = render_template('machine_load.html', machine_data_list=content_list, char1=temp1)
+        html = render_template('machine_load.html', machine_data_list=content_list, char1_0=temp1_0, char1=temp1, char1_1=temp1_1)
         return html
     # now = datetime.today()
     # content_list.append(now)

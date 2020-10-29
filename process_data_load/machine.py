@@ -8,9 +8,10 @@ class machine_operate:
 
     def op10(body):
         op10_data = {}
-        std = 0.0025
 
-        product_key = body[0]
+        std = 0.0025  # 표준편차
+
+        product_key = body[0]  # 값 리스트 받을 때 첫번째 요소
 
         wavyfin_l = np.random.normal(100, std)
         wavyfin_l = round(wavyfin_l, 5)
@@ -40,11 +41,14 @@ class machine_operate:
         op10_h = wavyfin_h
         op10_data['op10_h'] = op10_h
 
-        op10_process_time = body[3]
+        op10_process_time = np.random.exponential(10)
+        op10_process_time = round(op10_process_time, 5)
 
         op10_data['op10_electricity'] = op10_electricity
         op10_data['op10_process_time'] = op10_process_time
 
+
+        # 재공품 테스트
         if (op10_l < 199.99) or (op10_l > 200.01):
             length_test = 1
         else:
@@ -67,12 +71,53 @@ class machine_operate:
             op10_test = 'NOK'
             op10_data['op10_test'] = op10_test
 
-        now = datetime.now()
-        time_stamp = now + timedelta(seconds=op10_process_time)
-        op10_data['op10_time_stamp'] = time_stamp
-        time_stamp = str(time_stamp)
+        # 부품 테스트 (body)
+        if (body[1] < 199.99) or (body[1] > 200.01):
+            length_test = 1
+        else:
+            length_test = 0
 
-        product_key = time_stamp + product_key
+        if (body[2] < 99.99) or (body[2] > 100.01):
+            width_test = 1
+        else:
+            width_test = 0
+
+        if (body[3] < 49.99) or (body[3] > 50.01):
+            height_test = 1
+        else:
+            height_test = 0
+
+        if length_test == 0 and width_test == 0 and height_test == 0:
+            body_test = 'OK'
+        else:
+            body_test = 'NOK'
+
+        # 부품 테스트
+        if (wavyfin_l < 99.99) or (wavyfin_l > 100.01):
+            length_test = 1
+        else:
+            length_test = 0
+
+        if (wavyfin_w < 49.99) or (wavyfin_w > 50.01):
+            width_test = 1
+        else:
+            width_test = 0
+
+        if (wavyfin_h < 59.99) or (wavyfin_h > 60.01):
+            height_test = 1
+        else:
+            height_test = 0
+
+        if length_test == 0 and width_test == 0 and height_test == 0:
+            wavyfin_test = 'OK'
+        else:
+            wavyfin_test = 'NOK'
+
+        now = datetime.now()  # 현재 시간
+        time_stamp = now + timedelta(seconds=op10_process_time)  # 현재 시간에서 가동시간만큼 추가된 시간
+        op10_data['op10_time_stamp'] = time_stamp  # 추가된 시간이 완료되고 나가는 시간
+        time_stamp = str(time_stamp)  # 문자형으로 저장
+        product_key = time_stamp + product_key  # 키는 시간 + 아이템 정보로 저장
 
         # product_history 적재
         product_history_data_list = []
@@ -86,7 +131,27 @@ class machine_operate:
 
         product_history_data_list.append(product_history_insert)
 
-        MySQL_query.insert_product_history(product_history_data_list) # 히스토리 데이터 DB 적재
+        MySQL_query.insert_product_history(product_history_data_list)  # 히스토리 데이터 DB 적재
+
+        # 부품 히스토리 데이터 모아서 적재 (body)
+        part_data_list_body = []
+        part_history_insert_body = {}
+        part_history_insert_body['product_key'] = time_stamp + '-body'
+        part_history_insert_body['product_code'] = 'body'
+        part_history_insert_body['product_timestamp'] = time_stamp
+        part_data_list_body.append(part_history_insert_body)
+
+        MySQL_query.insert_product_history(part_data_list_body)  # 히스토리 데이터 DB 적재
+
+        # 부품 히스토리 데이터 모아서 적재 (wavyfin)
+        part_data_list = []
+        part_history_insert = {}
+        part_history_insert['product_key'] = time_stamp + '-wavyfin'
+        part_history_insert['product_code'] = 'wavyfin'
+        part_history_insert['product_timestamp'] = time_stamp
+        part_data_list.append(part_history_insert)
+
+        MySQL_query.insert_product_history(part_data_list)  # 히스토리 데이터 DB 적재
 
         # product_quality 적재
         product_quality_data_list = []  # 딕셔너리 데이터 저장할 리스트
@@ -102,6 +167,36 @@ class machine_operate:
         product_quality_data_list.append(product_quality_insert)
 
         MySQL_query.insert_product_quality(product_quality_data_list)  # 품질 데이터 DB 적재
+
+        # 부품 quality 적재 (body)
+        part_quality_data_list_body = []  # 딕셔너리 데이터 저장할 리스트
+        part_quality_insert_body = {}  # DB 저장할 데이터 모아주는 딕셔너리
+
+        part_quality_insert_body['product_key'] = time_stamp + '-body'
+        part_quality_insert_body['product_size_l'] = str(body[1])
+        part_quality_insert_body['product_size_w'] = str(body[2])
+        part_quality_insert_body['product_size_h'] = str(body[3])
+        part_quality_insert_body['product_test'] = str(body_test)
+        part_quality_insert_body['product_test_timestamp'] = str(time_stamp)
+
+        part_quality_data_list_body.append(part_quality_insert_body)
+
+        MySQL_query.insert_product_quality(part_quality_data_list_body)  # 품질 데이터 DB 적재
+
+        # 부품 quality 적재 (wavyfin)
+        part_quality_data_list = []  # 딕셔너리 데이터 저장할 리스트
+        part_quality_insert = {}  # DB 저장할 데이터 모아주는 딕셔너리
+
+        part_quality_insert['product_key'] = time_stamp + '-wavyfin'
+        part_quality_insert['product_size_l'] = str(wavyfin_l)
+        part_quality_insert['product_size_w'] = str(wavyfin_w)
+        part_quality_insert['product_size_h'] = str(wavyfin_h)
+        part_quality_insert['product_test'] = str(wavyfin_test)
+        part_quality_insert['product_test_timestamp'] = str(time_stamp)
+
+        part_quality_data_list.append(part_quality_insert)
+
+        MySQL_query.insert_product_quality(part_quality_data_list)  # 품질 데이터 DB 적재
 
         # machine 적재
         machine_data_list = []  # 딕셔너리 데이터 저장할 리스트
@@ -189,6 +284,27 @@ class machine_operate:
             op20_test = 'NOK'
             op20_data['op20_test'] = op20_test
 
+        # 부품 테스트
+        if (pipe1_l < 29.99) or (pipe1_l > 30.01):
+            length_test = 1
+        else:
+            length_test = 0
+
+        if (pipe1_w < 49.99) or (pipe1_w > 50.01):
+            width_test = 1
+        else:
+            width_test = 0
+
+        if (pipe1_h < 29.99) or (pipe1_h > 30.01):
+            height_test = 1
+        else:
+            height_test = 0
+
+        if length_test == 0 and width_test == 0 and height_test == 0:
+            pipe1_test = 'OK'
+        else:
+            pipe1_test = 'NOK'
+
         now = op10[4]
         time_stamp = now + timedelta(seconds=op20_process_time)
         op20_data['op20_time_stamp'] = time_stamp
@@ -210,6 +326,16 @@ class machine_operate:
 
         MySQL_query.insert_product_history(product_history_data_list) # 히스토리 데이터 DB 적재
 
+        # 부품 데이터 모아서 적재 (pipe1)
+        part_data_list = []
+        part_history_insert = {}
+        part_history_insert['product_key'] = time_stamp + '-pipe1'
+        part_history_insert['product_code'] = 'pipe1'
+        part_history_insert['product_timestamp'] = time_stamp
+        part_data_list.append(part_history_insert)
+
+        MySQL_query.insert_product_history(part_data_list)  # 히스토리 데이터 DB 적재
+
         # product_quality 적재
         product_quality_data_list = []  # 딕셔너리 데이터 저장할 리스트
         product_quality_insert = {}  # DB 저장할 데이터 모아주는 딕셔너리
@@ -224,6 +350,21 @@ class machine_operate:
         product_quality_data_list.append(product_quality_insert)
 
         MySQL_query.insert_product_quality(product_quality_data_list)  # 품질 데이터 DB 적재
+
+        # 부품 quality 적재 (pipe1)
+        part_quality_data_list = []  # 딕셔너리 데이터 저장할 리스트
+        part_quality_insert = {}  # DB 저장할 데이터 모아주는 딕셔너리
+
+        part_quality_insert['product_key'] = time_stamp + '-pipe1'
+        part_quality_insert['product_size_l'] = str(pipe1_l)
+        part_quality_insert['product_size_w'] = str(pipe1_w)
+        part_quality_insert['product_size_h'] = str(pipe1_h)
+        part_quality_insert['product_test'] = str(pipe1_test)
+        part_quality_insert['product_test_timestamp'] = str(time_stamp)
+
+        part_quality_data_list.append(part_quality_insert)
+
+        MySQL_query.insert_product_quality(part_quality_data_list)  # 품질 데이터 DB 적재
 
         # machine 적재
         machine_data_list = []  # 딕셔너리 데이터 저장할 리스트
@@ -312,6 +453,27 @@ class machine_operate:
             op30_test = 'NOK'
             op30_data['op30_test'] = op30_test
 
+        # 부품 테스트
+        if (pipe2_l < 29.99) or (pipe2_l > 30.01):
+            length_test = 1
+        else:
+            length_test = 0
+
+        if (pipe2_w < 49.99) or (pipe2_w > 50.01):
+            width_test = 1
+        else:
+            width_test = 0
+
+        if (pipe2_h < 29.99) or (pipe2_h > 30.01):
+            height_test = 1
+        else:
+            height_test = 0
+
+        if length_test == 0 and width_test == 0 and height_test == 0:
+            pipe2_test = 'OK'
+        else:
+            pipe2_test = 'NOK'
+
         now = op20[4]
         time_stamp = now + timedelta(seconds=op30_process_time)
         op30_data['op30_time_stamp'] = time_stamp
@@ -333,6 +495,16 @@ class machine_operate:
 
         MySQL_query.insert_product_history(product_history_data_list) # 히스토리 데이터 DB 적재
 
+        # 부품 데이터 모아서 적재 (pipe2)
+        part_data_list = []
+        part_history_insert = {}
+        part_history_insert['product_key'] = time_stamp + '-pipe2'
+        part_history_insert['product_code'] = 'pipe2'
+        part_history_insert['product_timestamp'] = time_stamp
+        part_data_list.append(part_history_insert)
+
+        MySQL_query.insert_product_history(part_data_list)  # 히스토리 데이터 DB 적재
+
         # product_quality 적재
         product_quality_data_list = []  # 딕셔너리 데이터 저장할 리스트
         product_quality_insert = {}  # DB 저장할 데이터 모아주는 딕셔너리
@@ -347,6 +519,21 @@ class machine_operate:
         product_quality_data_list.append(product_quality_insert)
 
         MySQL_query.insert_product_quality(product_quality_data_list)  # 품질 데이터 DB 적재
+
+        # 부품 quality 적재 (pipe2)
+        part_quality_data_list = []  # 딕셔너리 데이터 저장할 리스트
+        part_quality_insert = {}  # DB 저장할 데이터 모아주는 딕셔너리
+
+        part_quality_insert['product_key'] = time_stamp + '-pipe2'
+        part_quality_insert['product_size_l'] = str(pipe2_l)
+        part_quality_insert['product_size_w'] = str(pipe2_w)
+        part_quality_insert['product_size_h'] = str(pipe2_h)
+        part_quality_insert['product_test'] = str(pipe2_test)
+        part_quality_insert['product_test_timestamp'] = str(time_stamp)
+
+        part_quality_data_list.append(part_quality_insert)
+
+        MySQL_query.insert_product_quality(part_quality_data_list)  # 품질 데이터 DB 적재
 
         # machine 적재
         machine_data_list = []  # 딕셔너리 데이터 저장할 리스트
@@ -435,6 +622,27 @@ class machine_operate:
             op40_test = 'NOK'
             op40_data['op40_test'] = op40_test
 
+        # 부품 테스트
+        if (flange1_l < 29.99) or (flange1_l > 30.01):
+            length_test = 1
+        else:
+            length_test = 0
+
+        if (flange1_w < 79.99) or (flange1_w > 80.01):
+            width_test = 1
+        else:
+            width_test = 0
+
+        if (flange1_h < 39.99) or (flange1_h > 40.01):
+            height_test = 1
+        else:
+            height_test = 0
+
+        if length_test == 0 and width_test == 0 and height_test == 0:
+            flange1_test = 'OK'
+        else:
+            flange1_test = 'NOK'
+
         now = op30[4]
         time_stamp = now + timedelta(seconds=op40_process_time)
         op40_data['op40_time_stamp'] = time_stamp
@@ -451,10 +659,19 @@ class machine_operate:
         product_history_insert['product_key'] = product_key
         product_history_insert['product_code'] = product_code
         product_history_insert['product_timestamp'] = time_stamp
-
         product_history_data_list.append(product_history_insert)
 
         MySQL_query.insert_product_history(product_history_data_list) # 히스토리 데이터 DB 적재
+
+        # 부품 데이터 모아서 적재 (flange1)
+        part_data_list = []
+        part_history_insert = {}
+        part_history_insert['product_key'] = time_stamp + '-flange1'
+        part_history_insert['product_code'] = 'flange1'
+        part_history_insert['product_timestamp'] = time_stamp
+        part_data_list.append(part_history_insert)
+
+        MySQL_query.insert_product_history(part_data_list)  # 히스토리 데이터 DB 적재
 
         # product_quality 적재
         product_quality_data_list = []  # 딕셔너리 데이터 저장할 리스트
@@ -471,11 +688,25 @@ class machine_operate:
 
         MySQL_query.insert_product_quality(product_quality_data_list)  # 품질 데이터 DB 적재
 
+        # 부품 quality 적재 (flange1)
+        part_quality_data_list = []  # 딕셔너리 데이터 저장할 리스트
+        part_quality_insert = {}  # DB 저장할 데이터 모아주는 딕셔너리
+
+        part_quality_insert['product_key'] = time_stamp + '-flange1'
+        part_quality_insert['product_size_l'] = str(flange1_l)
+        part_quality_insert['product_size_w'] = str(flange1_w)
+        part_quality_insert['product_size_h'] = str(flange1_h)
+        part_quality_insert['product_test'] = str(flange1_test)
+        part_quality_insert['product_test_timestamp'] = str(time_stamp)
+        part_quality_data_list.append(part_quality_insert)
+
+        MySQL_query.insert_product_quality(part_quality_data_list)  # 품질 데이터 DB 적재
+
         # machine 적재
         machine_data_list = []  # 딕셔너리 데이터 저장할 리스트
         machine_data_insert = {}  # DB 저장할 데이터 모아주는 딕셔너리
 
-        machine_master_data = machine_master.op40(1) # machine_code 가져오기
+        machine_master_data = machine_master.op40(1)  # machine_code 가져오기
         machine_code = machine_master_data['machine_code']
 
         machine_data_insert['machine_code'] = machine_code
@@ -486,7 +717,6 @@ class machine_operate:
         machine_data_insert['process_time'] = str(op40_process_time)
         machine_data_insert['machine_data'] = str(op40_temperature)
         machine_data_insert['machine_data_code'] = 'T01'
-
         machine_data_list.append(machine_data_insert)
 
         MySQL_query.insert_machine(machine_data_list)  # machine 데이터 DB 적재
@@ -558,6 +788,27 @@ class machine_operate:
             op50_test = 'NOK'
             op50_data['op50_test'] = op50_test
 
+        # 부품 테스트
+        if (flange2_l < 29.99) or (flange2_l > 30.01):
+            length_test = 1
+        else:
+            length_test = 0
+
+        if (flange2_w < 79.99) or (flange2_w > 80.01):
+            width_test = 1
+        else:
+            width_test = 0
+
+        if (flange2_h < 39.99) or (flange2_h > 40.01):
+            height_test = 1
+        else:
+            height_test = 0
+
+        if length_test == 0 and width_test == 0 and height_test == 0:
+            flange2_test = 'OK'
+        else:
+            flange2_test = 'NOK'
+
         now = op40[4]
         time_stamp = now + timedelta(seconds=op50_process_time)
         op50_data['op50_time_stamp'] = time_stamp
@@ -579,6 +830,16 @@ class machine_operate:
 
         MySQL_query.insert_product_history(product_history_data_list) # 히스토리 데이터 DB 적재
 
+        # 부품 데이터 모아서 적재 (flange2)
+        part_data_list = []
+        part_history_insert = {}
+        part_history_insert['product_key'] = time_stamp + '-flange2'
+        part_history_insert['product_code'] = 'flange2'
+        part_history_insert['product_timestamp'] = time_stamp
+        part_data_list.append(part_history_insert)
+
+        MySQL_query.insert_product_history(part_data_list)  # 히스토리 데이터 DB 적재
+
         # product_quality 적재
         product_quality_data_list = []  # 딕셔너리 데이터 저장할 리스트
         product_quality_insert = {}  # DB 저장할 데이터 모아주는 딕셔너리
@@ -588,6 +849,21 @@ class machine_operate:
         product_quality_insert['product_size_w'] = str(op50_w)
         product_quality_insert['product_size_h'] = str(op50_h)
         product_quality_insert['product_test'] = str(op50_test)
+        product_quality_insert['product_test_timestamp'] = str(time_stamp)
+
+        product_quality_data_list.append(product_quality_insert)
+
+        MySQL_query.insert_product_quality(product_quality_data_list)  # 품질 데이터 DB 적재
+
+        # product_quality 적재
+        product_quality_data_list = []  # 딕셔너리 데이터 저장할 리스트
+        product_quality_insert = {}  # DB 저장할 데이터 모아주는 딕셔너리
+
+        product_quality_insert['product_key'] = time_stamp + '-flange2'
+        product_quality_insert['product_size_l'] = str(flange2_l)
+        product_quality_insert['product_size_w'] = str(flange2_w)
+        product_quality_insert['product_size_h'] = str(flange2_h)
+        product_quality_insert['product_test'] = str(flange2_test)
         product_quality_insert['product_test_timestamp'] = str(time_stamp)
 
         product_quality_data_list.append(product_quality_insert)
