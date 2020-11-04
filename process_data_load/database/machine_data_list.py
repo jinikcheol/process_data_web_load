@@ -36,8 +36,9 @@ def get_machine_data_list(char1_0, char1, char1_1):
             'product_key': obj[1],
             'start_time': obj[2],
             'end_time': obj[3],
-            'machine_data': obj[4],
-            'machine_data_code': obj[5]
+            'process_time': obj[4],
+            'machine_data': obj[5],
+            'machine_data_code': obj[6]
         }
         machine_data_list.append(data_dic)
 

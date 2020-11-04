@@ -11,5 +11,5 @@ def get_datamakes(char3):
             data_list.append(datamakelist)
             #data_list_d = np.array(data_list)
             #data_list_s = sum(data_list, [])
-        print(data_list)
-        return data_list
+        print(total_data.items())
+        return total_data.items()

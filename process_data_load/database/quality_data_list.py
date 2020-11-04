@@ -2,6 +2,7 @@ from database import connection
 
 # 해야 할 일 내용 가져오기
 # 최근에 작성된 순서대로
+
 def get_quality_data_list(char2_0, char2, char2_1):
     conn = connection.get_connection()
     cursor = conn.cursor()
@@ -27,17 +28,17 @@ def get_quality_data_list(char2_0, char2, char2_1):
 
     cursor.execute(sql)
     row = cursor.fetchall()
-
+    count = 0
     data_list = []
-
     for obj in row :
         data_dic = {
-            'product_key' : obj[0],
-            'product_test' : obj[1],
-            'product_test_timestamp' : obj[2]
+            'product_key': obj[0],
+            'product_test': obj[1],
+            'product_test_timestamp': obj[2]
         }
         data_list.append(data_dic)
-
+        if obj[1] == 'OK' or 'NOK' :
+             count += 1
     conn.close
-
+    print(count)
     return data_list

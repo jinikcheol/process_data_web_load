@@ -19,6 +19,8 @@
         <input type="date" name="char1">
         <input type="date" name="char1_1">
         <button type="submit">검색</button></form>
+    <form method="post" >
+            <button type="submit">그래프</button></form>
         <form method="GET" action="/home">
         <button type="submit">뒤로</button>
     </form>
@@ -32,6 +34,7 @@
       <th>product_key</th>
       <th>start_time</th>
       <th>end_time</th>
+        <th>process_time</th>
       <th>machine_data</th>
         <th>machine_data_code</th></br>
     </tr>
@@ -43,8 +46,9 @@
             <td>{{obj.product_key}}</td>
             <td>{{obj.start_time}}</td>
             <td>{{obj.end_time}}</td>
+            <td>{{obj.process_time}}</td>
             <td>{{obj.machine_data}}</td>
-            <td style="padding-left:5px">{{obj.machine_data_code}}</td></br>
+            <td>{{obj.machine_data_code}}</td></br>
         </tr>
 </tbody>
     {% endfor %}

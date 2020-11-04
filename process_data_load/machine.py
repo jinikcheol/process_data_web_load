@@ -41,8 +41,7 @@ class machine_operate:
         op10_h = wavyfin_h
         op10_data['op10_h'] = op10_h
 
-        op10_process_time = np.random.exponential(10)
-        op10_process_time = round(op10_process_time, 5)
+        op10_process_time = body[4]
 
         op10_data['op10_electricity'] = op10_electricity
         op10_data['op10_process_time'] = op10_process_time
@@ -113,7 +112,7 @@ class machine_operate:
         else:
             wavyfin_test = 'NOK'
 
-        now = datetime.now()  # 현재 시간
+        now = body[5]  # 현재 시간
         time_stamp = now + timedelta(seconds=op10_process_time)  # 현재 시간에서 가동시간만큼 추가된 시간
         op10_data['op10_time_stamp'] = time_stamp  # 추가된 시간이 완료되고 나가는 시간
         time_stamp = str(time_stamp)  # 문자형으로 저장
@@ -235,8 +234,7 @@ class machine_operate:
         pipe1_h = np.random.normal(30, std)
         pipe1_h = round(pipe1_h, 5)
 
-        op20_process_time = np.random.exponential(10)
-        op20_process_time = round(op20_process_time, 5)
+        op20_process_time = op10[5]
 
         op20_electricity = np.random.uniform(89, 100)
         op20_electricity = round(op20_electricity, 5)
@@ -305,12 +303,12 @@ class machine_operate:
         else:
             pipe1_test = 'NOK'
 
-        now = op10[4]
+        now = op10[6]
         time_stamp = now + timedelta(seconds=op20_process_time)
         op20_data['op20_time_stamp'] = time_stamp
         time_stamp = str(time_stamp)
 
-        product_key = time_stamp +  product_key
+        product_key = time_stamp + product_key
 
         # product_history 적재
         product_history_data_list = []
@@ -324,7 +322,7 @@ class machine_operate:
 
         product_history_data_list.append(product_history_insert)
 
-        MySQL_query.insert_product_history(product_history_data_list) # 히스토리 데이터 DB 적재
+        MySQL_query.insert_product_history(product_history_data_list)  # 히스토리 데이터 DB 적재
 
         # 부품 데이터 모아서 적재 (pipe1)
         part_data_list = []
@@ -403,8 +401,7 @@ class machine_operate:
         pipe2_h = np.random.normal(30, std)
         pipe2_h = round(pipe2_h, 5)
 
-        op30_process_time = np.random.exponential(10)
-        op30_process_time = round(op30_process_time, 5)
+        op30_process_time = op20[5]
 
         op30_electricity = np.random.uniform(89, 100)
         op30_electricity = round(op30_electricity, 5)
@@ -474,7 +471,7 @@ class machine_operate:
         else:
             pipe2_test = 'NOK'
 
-        now = op20[4]
+        now = op20[6]
         time_stamp = now + timedelta(seconds=op30_process_time)
         op30_data['op30_time_stamp'] = time_stamp
         time_stamp = str(time_stamp)
@@ -493,7 +490,7 @@ class machine_operate:
 
         product_history_data_list.append(product_history_insert)
 
-        MySQL_query.insert_product_history(product_history_data_list) # 히스토리 데이터 DB 적재
+        MySQL_query.insert_product_history(product_history_data_list)  # 히스토리 데이터 DB 적재
 
         # 부품 데이터 모아서 적재 (pipe2)
         part_data_list = []
@@ -572,8 +569,7 @@ class machine_operate:
         flange1_h = np.random.normal(40, std)
         flange1_h = round(flange1_h, 5)
 
-        op40_process_time = np.random.exponential(10)
-        op40_process_time = round(op40_process_time, 5)
+        op40_process_time = op30[5]
 
         op40_temperature = np.random.uniform(489, 511)
         op40_temperature = round(op40_temperature, 5)
@@ -738,8 +734,7 @@ class machine_operate:
         flange2_h = np.random.normal(40, std)
         flange2_h = round(flange2_h, 5)
 
-        op50_process_time = np.random.exponential(10)
-        op50_process_time = round(op50_process_time, 5)
+        op50_process_time = op40[5]
 
         op50_temperature = np.random.uniform(489, 511)
         op50_temperature = round(op50_temperature, 5)
@@ -898,8 +893,8 @@ class machine_operate:
 
         product_key = op50[0]
 
-        op60_process_time = np.random.exponential(10)
-        op60_process_time = round(op60_process_time, 5)
+        op60_process_time = op50[5]
+
         op60_data['product_key'] = product_key
         op60_l = op50[1]
         op60_data['op60_l'] = op60_l
@@ -953,7 +948,7 @@ class machine_operate:
 
         product_history_data_list.append(product_history_insert)
 
-        MySQL_query.insert_product_history(product_history_data_list) # 히스토리 데이터 DB 적재
+        MySQL_query.insert_product_history(product_history_data_list)  # 히스토리 데이터 DB 적재
 
         # product_quality 적재
         product_quality_data_list = []  # 딕셔너리 데이터 저장할 리스트

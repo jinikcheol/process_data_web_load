@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
+
     <title>
         품질 데이터
     </title>
@@ -15,6 +16,8 @@
         <input type="date" name="char2">
         <input type="date" name="char2_1">
         <button type="submit">검색</button></form>
+        <form method="post" >
+            <button type="submit">그래프</button></form>
         <form method="GET" action="/home">
         <button type="submit">뒤로</button>
     </form>
@@ -22,13 +25,15 @@
 
 {% if char2 == None and char2_1 == None %}
 {% else %}
-    {% for obj in quality_data_list%}
+    {% for obj in quality_data_list %}
     <tbody>
+        {{loop.index}}
         <tr>
             <td style="width:10%;padding-right:5px">{{obj.product_key}}</td>
             <td>{{obj.product_test}}</td>
-            <tdstyle="padding-left:5px">{{obj.product_test_timestamp}}</td></br>
+            <td style="padding-left:5px">{{obj.product_test_timestamp}}</td></br>
         </tr>
+
     </tbody>
     {% endfor %}
 {% endif %}
